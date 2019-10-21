@@ -6,7 +6,7 @@ import reedsolomon.ErrorCorrectionEncoding;
 
 public final class DataEncoding {
 
-	/**
+	/**test
 	 * @param input test
 	 * @param version
 	 * @return
