@@ -11,8 +11,11 @@ public final class DataEncoding {
 	 * @param version
 	 * @return
 	 */
+	//encodeString(INPUT, maxLength);
+	
 	public static boolean[] byteModeEncoding(String input, int version) {
 		// TODO Implementer
+		
 		return null;
 	}
 
@@ -21,12 +24,19 @@ public final class DataEncoding {
 	 *            The string to convert to ISO-8859-1
 	 * @param maxLength
 	 *          The maximal number of bytes to encode (will depend on the version of the QR code) 
-	 * @return A array that represents the input in ISO-8859-1. The output is
+	 * @return An array that represents the input in ISO-8859-1. The output is
 	 *         truncated to fit the version capacity
 	 */
 	public static int[] encodeString(String input, int maxLength) {
 		// TODO Implementer
-
+		
+		for(int i = 0; i < input.length(); ++i) {
+			char[] chari = new char[input.length()];
+			String str = "Welcome to string handling tutorial";
+			//This will return the first char of the string
+			 chari[i] = str.charAt(i);
+		}
+		
 		return null;
 	}
 
