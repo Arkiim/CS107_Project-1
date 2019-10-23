@@ -11,7 +11,10 @@ public final class DataEncoding {
 	 * @param version
 	 * @return
 	 */
-	//encodeString(INPUT, maxLength);
+	
+	public static void main(String[] args) {
+		encodeString(Main.INPUT, QRCodeInfos.getMaxInputLength(4));
+	}
 	
 	public static boolean[] byteModeEncoding(String input, int version) {
 		// TODO Implementer
@@ -29,15 +32,17 @@ public final class DataEncoding {
 	 */
 	public static int[] encodeString(String input, int maxLength) {
 		// TODO Implementer
+		byte[] tabByte = input.getBytes(StandardCharsets.ISO_8859_1);
 		
-		for(int i = 0; i < input.length(); ++i) {
-			char[] chari = new char[input.length()];
-			String str = "Welcome to string handling tutorial";
-			//This will return the first char of the string
-			 chari[i] = str.charAt(i);
+		int[] tabInt = new int[maxLength]; //ne prend que les maxLength premiers octets de tabByte[]. Sinon --> for retourne une errreur
+		
+		System.out.println(tabByte.length + ", " + tabInt.length + " " + maxLength);
+		
+		for(int i = 0 ; i < maxLength; ++i) {
+			tabInt[i] = tabByte[i] & 0xFF; 
+			System.out.println("tabInt[" + i + "] == " + tabInt[i] + " = " + tabByte[i] + "== tabByte[" + i +"]");
 		}
-		
-		return null;
+		return tabInt;
 	}
 
 	/**
@@ -49,6 +54,9 @@ public final class DataEncoding {
 	 */
 	public static int[] addInformations(int[] inputBytes) {
 		// TODO Implementer
+		
+		
+		
 		return null;
 	}
 
