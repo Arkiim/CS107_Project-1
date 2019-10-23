@@ -14,6 +14,13 @@ public class MatrixConstruction {
 	// TODO add constant for White pixel
 	// TODO add constant for Black pixel
 	
+	final static int W = 0xFF_FF_FF_FF;
+	final static int B = 0xFF_00_00_00;
+	final static int A = 0xFF_00_00_FF;
+	
+	final static int finderSize = 7;
+	final static int paddingSize = finderSize + 1;
+	final static int allignmentSize = 5;
 
 	// ...  MYDEBUGCOLOR = ...;
 	// feel free to add your own colors for debugging purposes
@@ -80,9 +87,31 @@ public class MatrixConstruction {
 	 *            included
 	 * @return an empty matrix
 	 */
-	public static int[][] initializeMatrix(int version) {
-		// TODO Implementer
+	public static int[][] initializeMatrix(int version) {	
+		int maxVersion = 4;
+		
+		for (int i = 0; i < maxVersion; i++) {
+			
+			if(version == i) {
+				int qrSize = QRCodeInfos.getMatrixSize(i);
+				int[][] matrix = new int[qrSize][qrSize];
+				
+				for (int j = 0; j < qrSize ; i ++) {			
+					
+					for (int k = 0; k < qrSize ; k ++) {				
+						
+						matrix[j][k] = A;			
+						
+					}			
+				}
+				
+				
+				return matrix;
+			}				
+		}	
+		
 		return null;
+	
 	}
 
 	/**
@@ -92,7 +121,57 @@ public class MatrixConstruction {
 	 *            the 2D array to modify: where to add the patterns
 	 */
 	public static void addFinderPatterns(int[][] matrix) {
-		// TODO Implementer
+		
+		int [][] finderPattern = {{B,B,B,B,B,B,B} , {B,W,W,W,W,W,B} , {B,W,B,B,B,W,B} , {B,W,B,B,B,W,B}
+		, {B,W,B,B,B,W,B}, {B,W,W,W,W,W,B}  , {B,B,B,B,B,B,B} , {W,W,W,W,W,W,W}};	
+		
+				
+		// Top Left corner		
+		PatternGenerator(matrix, 0 , 0, finderSize, finderPattern);
+		PatternHorizontal(matrix, 0, finderSize, paddingSize);
+		PatternVertical(matrix, finderSize, 0, paddingSize);
+		
+		// Bottom Left corner
+		PatternGenerator(matrix, matrix.length - finderSize , 0, finderSize, finderPattern);	
+		PatternHorizontal(matrix, 0, matrix.length - paddingSize, paddingSize);
+		PatternVertical(matrix, matrix.length - paddingSize, 0, paddingSize);
+		
+		// Top Right corner
+		PatternGenerator(matrix, 0, matrix.length - finderSize, finderSize, finderPattern );
+		PatternHorizontal(matrix, matrix.length- paddingSize, finderSize, paddingSize);
+		PatternVertical(matrix, finderSize, matrix.length - paddingSize, paddingSize);
+		
+	}
+	
+	// the starting position is the top left corner of the finderPattern
+	public static void PatternGenerator(int[][] matrix, int startPosX, int startPosY, int PatternSize, int [][] finderPattern) {		
+		
+		for (int i = startPosY; i < startPosY + PatternSize ; i ++) {			
+			
+			for (int k = startPosX; k < startPosX + PatternSize; k ++) {				
+				
+				matrix[i][k] = finderPattern[i - startPosY][k - startPosX];					
+			}			
+		}
+			
+	}
+	
+	
+	public static void PatternHorizontal(int[][] matrix, int startPosX, int startPosY, int lineLength) {
+		
+		for (int i = startPosX; i < startPosX + lineLength ; i ++) {			
+			
+			matrix[i][startPosY] = W;			
+		}		
+	}
+	
+	public static void PatternVertical(int[][] matrix, int startPosX, int startPosY, int lineLength) {
+		
+		for (int i = startPosY; i < startPosY + lineLength ; i ++) {			
+			
+			matrix[startPosX][i] = W;			
+		}		
+	
 	}
 
 	/**
@@ -104,10 +183,18 @@ public class MatrixConstruction {
 	 *            the version number of the QR code needs to be between 1 and 4
 	 *            included
 	 */
-	public static void addAlignmentPatterns(int[][] matrix, int version) {
-		// TODO Implementer
+	public static void addAlignmentPatterns(int[][] matrix, int version) {		
+		 if (version <= 1) {
+			 return ;
+		 }
+		 
+		 int [][] alignmentPattern = {{B,B,B,B,B} , {B,W,W,W,B} , {B,W,B,W,B} , {B,W,W,W,B}, {B,B,B,B,B}};
+		 
+		 PatternGenerator(matrix,  matrix.length - 9, matrix.length - 9, allignmentSize, alignmentPattern);	
+		 
+			 
 	}
-
+	
 	/**
 	 * Add the timings patterns
 	 * 
@@ -115,8 +202,32 @@ public class MatrixConstruction {
 	 *            The 2D array to modify
 	 */
 	public static void addTimingPatterns(int[][] matrix) {
-		// TODO Implementer
+		
+		 // forming a vertical line
+		 for (int i = finderSize; i < matrix.length - finderSize; i ++) {
+			 if(i % 2 == 0) {
+				 matrix[finderSize - 1][i] = B;
+			 }
+			 
+			 if(i % 2 == 1) {
+				 matrix[finderSize - 1][i] = W;
+			 }
+		 }
+		 
+		 // forming a horizontal line
+		 for (int i = finderSize; i < matrix.length - finderSize; i ++) {
+			 if(i % 2 == 0) {
+				 matrix[i][finderSize - 1] = B;
+			 }
+			 
+			 if(i % 2 == 1) {
+				 matrix[i][finderSize - 1] = W;
+			 }
+		 }
+			
+
 	}
+	
 
 	/**
 	 * Add the dark module to the matrix
@@ -124,8 +235,8 @@ public class MatrixConstruction {
 	 * @param matrix
 	 *            the 2-dimensional array representing the QR code
 	 */
-	public static void addDarkModule(int[][] matrix) {
-		// TODO Implementer
+	public static void addDarkModule(int[][] matrix) {		
+		matrix[8][matrix.length - 8] = B;	
 	}
 
 	/**
@@ -137,8 +248,49 @@ public class MatrixConstruction {
 	 *            the mask id
 	 */
 	public static void addFormatInformation(int[][] matrix, int mask) {
-		// TODO Implementer
+		boolean[] formatInformationBoolean = QRCodeInfos.getFormatSequence(mask);
+		int[] formatInformationBit = new int[formatInformationBoolean.length];
+
+		
+		for (int i = 0; i < formatInformationBoolean.length; i ++) {			
+			System.out.print(formatInformationBoolean[i]);
+			if(formatInformationBoolean[i]) {
+				formatInformationBit[i] = B;
+			} else {
+				formatInformationBit[i] = W;
+			}			
+		}
+		//Top left
+		formatInformationHorizontal(matrix, 0, finderSize + 1, 8, formatInformationBit, 0) ;
+		formatInformationVertical(matrix,  finderSize + 1 , finderSize + 1, paddingSize + 1, formatInformationBit, 7) ;
+		
+		//Top right
+		formatInformationHorizontal(matrix, matrix.length - paddingSize, finderSize + 1, 8, formatInformationBit, 7) ;
+		formatInformationVertical(matrix,  finderSize + 1 , matrix.length - 1, paddingSize - 1, formatInformationBit, 0) ;
+	}	
+	
+	static void formatInformationHorizontal(int[][] matrix, int startPosX, int startPosY, int lineLength, int[]informationPattern, int informationPatternIndex) {		
+		
+		for (int i = startPosX; i < startPosX + lineLength ; i ++) {			
+			System.out.println("horizontal" + i);
+			if(matrix[i][startPosY] != B && matrix[i][startPosY] != W) {			
+				matrix[i][startPosY] = informationPattern[informationPatternIndex];	
+				informationPatternIndex++;
+			}
+		}		
 	}
+	
+	static void formatInformationVertical(int[][] matrix, int startPosX, int startPosY, int lineLength, int[]informationPattern, int informationPatternIndex) {		
+		
+		for (int i = startPosY; i > startPosY - lineLength ; i --) {			
+			System.out.println("vertical" + i);
+			if(matrix[startPosX][i] != B && matrix[startPosX][i] != W) {					
+				matrix[startPosX][i] = informationPattern[informationPatternIndex];	
+				informationPatternIndex++;
+			}
+		}		
+	}
+	
 
 	/*
 	 * =======================================================================
