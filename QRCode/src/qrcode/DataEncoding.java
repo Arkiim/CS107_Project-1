@@ -13,7 +13,9 @@ public final class DataEncoding {
 	 */
 	
 	public static void main(String[] args) {
-		encodeString(Main.INPUT, QRCodeInfos.getMaxInputLength(4));
+		int[] inputBytes = encodeString(Main.INPUT, QRCodeInfos.getMaxInputLength(4));
+		addInformations(inputBytes);
+		
 	}
 	
 	public static boolean[] byteModeEncoding(String input, int version) {
@@ -34,15 +36,17 @@ public final class DataEncoding {
 		// TODO Implementer
 		byte[] tabByte = input.getBytes(StandardCharsets.ISO_8859_1);
 		
-		int[] tabInt = new int[maxLength]; //ne prend que les maxLength premiers octets de tabByte[]. Sinon --> for retourne une errreur
+		if(maxLength >= tabByte.length ) { // si le message prend moins de place que maxLength, réduit la taille des arrays
+			maxLength = tabByte.length;
+		}
 		
-		System.out.println(tabByte.length + ", " + tabInt.length + " " + maxLength);
+		int[] inputBytes = new int[maxLength]; //ne prend que les maxLength premiers octets de tabVyte[]
 		
 		for(int i = 0 ; i < maxLength; ++i) {
-			tabInt[i] = tabByte[i] & 0xFF; 
-			System.out.println("tabInt[" + i + "] == " + tabInt[i] + " = " + tabByte[i] + "== tabByte[" + i +"]");
+			inputBytes[i] = tabByte[i] & 0xFF; 
+			//System.out.println("inputBytes[" + i + "] == " + inputBytes[i] + " = " + tabByte[i] + "== tabByte[" + i +"]");
 		}
-		return tabInt;
+		return inputBytes;
 	}
 
 	/**
@@ -54,9 +58,6 @@ public final class DataEncoding {
 	 */
 	public static int[] addInformations(int[] inputBytes) {
 		// TODO Implementer
-		
-		
-		
 		return null;
 	}
 
