@@ -2,8 +2,6 @@ package qrcode;
 
 import java.nio.charset.StandardCharsets;
 
-import reedsolomon.ErrorCorrectionEncoding;
-
 public final class DataEncoding {
 
 	/**test
@@ -15,7 +13,6 @@ public final class DataEncoding {
 	public static void main(String[] args) {
 		int[] inputBytes = encodeString(Main.INPUT, QRCodeInfos.getMaxInputLength(4));
 		addInformations(inputBytes);
-		
 	}
 	
 	public static boolean[] byteModeEncoding(String input, int version) {
@@ -44,8 +41,8 @@ public final class DataEncoding {
 		
 		for(int i = 0 ; i < maxLength; ++i) {
 			inputBytes[i] = tabByte[i] & 0xFF; 
-			//System.out.println("inputBytes[" + i + "] == " + inputBytes[i] + " = " + tabByte[i] + "== tabByte[" + i +"]");
 		}
+		
 		return inputBytes;
 	}
 
@@ -58,7 +55,27 @@ public final class DataEncoding {
 	 */
 	public static int[] addInformations(int[] inputBytes) {
 		// TODO Implementer
-		return null;
+		int lgth = 0b00110001 ; //49
+		int prefix = 0b0100 ;
+		
+		int[] encodedData = new int[inputBytes.length + 2] ;
+		
+		encodedData[0] = prefix << 4  | (lgth & 0b1111_0000) >> 4 ; // Conjonction logique(&) entre lgth et un octet où ses 4 bits de poids faibles sont à 0, pour être sûr de ne prendre que les 4 bits de poids fort
+		// 0100_0000 or 0000_0011  = 0100_0011
+		
+		encodedData[1] =  (lgth & 0b0000_1111) << 4 | inputBytes[0] >> 4 ; //0001_0000 or 0000_0101 = 0001_0101
+		
+		
+		for(int i = 2 ; i < encodedData.length - 1; ++i) { // le dernier élément sera ajouté hors de la boucle pour ne pas que l'algorithme aille chercher un 50e élément (hors des bornes) de inputBytes
+			
+			int heavyB = inputBytes[i-2] & 0b0000_1111 ; // Prend seulement la moitié nécessaire et la décale pour pouvoir combiner les deux ( heavyB et lightB)
+			int lightB = inputBytes[i-1] & 0b1111_0000;
+			encodedData[i] =  heavyB << 4  | lightB >> 4 ;
+			
+		} encodedData[encodedData.length - 1] = (inputBytes[inputBytes.length - 1] & 0b0000_1111) << 4 | 0b0000  ;
+		
+		
+		return encodedData;	
 	}
 
 	/**
@@ -103,5 +120,21 @@ public final class DataEncoding {
 		// TODO Implementer
 		return null;
 	}
+	
+	
+	//Pour tester/afficher la valeur en binaire du message encodé en ayant un output sous format binaire (dans un string) 
+	public static String toBinaryStr(int X) { 
+		String binaryX = Integer.toBinaryString(X);
+		int length = binaryX.length();
+		
+		for(int i = 0; i < 8 - length; i ++) {
+			binaryX = "0" + binaryX;
+		}
+		
+		//System.out.println(binaryX);
+		
+		return binaryX;
+	}
 
+	
 }
