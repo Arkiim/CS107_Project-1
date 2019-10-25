@@ -1,6 +1,7 @@
 package qrcode;
 
 import java.nio.charset.StandardCharsets;
+import reedsolomon.ErrorCorrectionEncoding;
 
 public final class DataEncoding {
 
@@ -13,7 +14,9 @@ public final class DataEncoding {
 	public static void main(String[] args) {
 		int[] inputBytes = encodeString(Main.INPUT, QRCodeInfos.getMaxInputLength(Main.VERSION));
 		int[] encodedData = addInformations(inputBytes);
-		fillSequence(encodedData, QRCodeInfos.getCodeWordsLength(Main.VERSION));
+		int[] data = fillSequence(encodedData, QRCodeInfos.getCodeWordsLength(Main.VERSION));
+		int[] dataCorrection = addErrorCorrection(data, QRCodeInfos.getECCLength(Main.VERSION));
+		bytesToBinaryArray(dataCorrection);
 	}
 	
 	public static boolean[] byteModeEncoding(String input, int version) {
@@ -56,7 +59,7 @@ public final class DataEncoding {
 	 */
 	public static int[] addInformations(int[] inputBytes) {
 		// TODO Implementer
-		int lgth = 0b00110001 ; //49
+		int lgth = inputBytes.length & 0xFF ; //49
 		int prefix = 0b0100 ;
 		
 		int[] encodedData = new int[inputBytes.length + 2] ;
@@ -70,10 +73,12 @@ public final class DataEncoding {
 		for(int i = 2 ; i < encodedData.length - 1; ++i) { // le dernier élément sera ajouté hors de la boucle pour ne pas que l'algorithme aille chercher un 50e élément (hors des bornes) de inputBytes
 			
 			int heavyB = inputBytes[i-2] & 0b0000_1111 ; // Prend seulement la moitié nécessaire et la décale pour pouvoir combiner les deux ( heavyB et lightB)
-			int lightB = inputBytes[i-1] & 0b1111_0000;
+			int lightB = inputBytes[i-1] /*& 0b1111_0000*/;
 			encodedData[i] =  heavyB << 4  | lightB >> 4 ;
 			
-		} encodedData[encodedData.length - 1] = (inputBytes[inputBytes.length - 1] & 0b0000_1111) << 4 | 0b0000  ;
+		} 
+		
+		encodedData[encodedData.length - 1] = (inputBytes[inputBytes.length - 1] & 0b0000_1111) << 4  | 0b0000  ;
 		
 		
 		return encodedData;	
@@ -93,32 +98,34 @@ public final class DataEncoding {
 	public static int[] fillSequence(int[] encodedData, int finalLength) {
 		// TODO Implementer
 		
-		if(finalLength > encodedData.length ) {
+		if(encodedData.length < finalLength) {
 			
 			
-			int[] finalData = new int[finalLength];
+			int[] data = new int[finalLength];
 			
 			for(int i = 0 ; i < encodedData.length ; ++i) {
-				finalData[i] = encodedData[i];
+				data[i] = encodedData[i];
 			}
 			int j=0;
 			
-			for(int i = encodedData.length - 1 ; i < finalLength ; ++i ) {
+			for(int i = encodedData.length ; i < finalLength ; ++i ) {
 				
 				if(j == 0) {
-					finalData[i] = 236;
+					data[i] = 236 & 0xFF;
 					j = 1;
 				} else if(j == 1) {
-					finalData[i] = 17;
+					data[i] = 17 & 0xFF;
 					j = 0;
 				}
 				
 			}
-		
-			return finalData;
+			
+			return data;
+			
+			
 		} 
 		
-		return null;
+		return encodedData;
 	}
 
 	/**
@@ -130,9 +137,27 @@ public final class DataEncoding {
 	 *            the version of the QR code
 	 * @return the original data concatenated with the error correction
 	 */
+
 	public static int[] addErrorCorrection(int[] encodedData, int eccLength) {
 		// TODO Implementer
-		return null;
+		
+		int[] correctionBytes = ErrorCorrectionEncoding.encode(encodedData , eccLength);
+		//tableau de taille égale à la somme de celle des autres tableaux
+		
+		int[] dataCorrection = new int[correctionBytes.length + encodedData.length]; 
+		
+		for(int i = 0; i < dataCorrection.length ; ++i ) {
+			
+			//Une fois que la valeur de i dépasse la taille du tableau comprenant les octet de encodedData, ce sont les eccLength octets de dataCorrection qui remplissent la fin du tableau final dataCorrection. 
+			if( i < encodedData.length ) {
+				dataCorrection[i] = encodedData[i] ;
+			} else {
+				dataCorrection[i] = correctionBytes[i-encodedData.length];
+			}
+			
+		}
+			
+		return dataCorrection;
 	}
 
 	/**
@@ -145,7 +170,55 @@ public final class DataEncoding {
 	 */
 	public static boolean[] bytesToBinaryArray(int[] data) {
 		// TODO Implementer
-		return null;
+		
+		int[][] binValue = getBinValue(data);
+		boolean[] binaryArray = new boolean[data.length*8];
+		int i = 0;
+		
+		for(int k = 0 ; k < data.length ; ++k) {
+			
+			for(int j = 0 ; j < binValue[k].length ; ++j) {
+				//mets chaque array de 8 bits correspondant à un élément de data[] sous forme de valeur booléenne ("projette" le tableau en 2d dans un tableau "simple" en booléen)
+				if(binValue[k][j] == 1) {
+					binaryArray[i] = true;
+				} else {
+					binaryArray[i] = false;
+				}
+				++i;
+			}
+			
+		}
+
+		return binaryArray;
+	}
+	
+	public static int[][] getBinValue(int[] data) {
+		
+		int[] bitTbl = getBitIsolator();
+		int[][]binValue = new int[data.length][8];
+		
+		for(int i = 0 ; i < data.length ; ++i) {
+			//fait un array de 8 élément pour stocker les 8 bits d'un entier. Puis répète tout ça pour chaque élément de data[]
+			for(int j = 0 ; j< 8 ; ++j) {
+				binValue[i][j] = (bitTbl[j] & data[i]) >> (7-j) ;
+				//décale la valeur de 7-j pour que la valeur soit toujours soit 0, soit 1 (bitTbl commence à 1000_0000)
+			}
+			
+		}
+		
+		return binValue;
+	}
+	
+	public static int[] getBitIsolator() {
+		
+		int[] bitIsolator = new int[8]; 
+		
+		//rempli un tableau d'octet avec 1 bit par octet à une place différente à chaque fois pour utiliser la même "astuce" que dans la méthode addInformations()
+		for(int i = 0; i < 8 ; ++i) {
+			bitIsolator[i] = 0b1000_0000 >> i;
+		} //tableau commence à 1000_000 et fini à 0000_0001 
+		
+		return bitIsolator;
 	}
 	
 	
