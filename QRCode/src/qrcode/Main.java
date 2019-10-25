@@ -2,7 +2,7 @@ package qrcode;
 
 public class Main {
 
-	public static final String INPUT =  "Bonne journée!"; //Write you message here. Accents are permitted, but not all characters. See the norm ISO/CEI 8859-1 on wikipedia for more info"
+	public static final String INPUT =  "Programming is a skill best acquired by practice."; //Write you message here. Accents are permitted, but not all characters. See the norm ISO/CEI 8859-1 on wikipedia for more info"
 
 	/*
 	 * Parameters

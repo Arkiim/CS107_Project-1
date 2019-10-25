@@ -12,17 +12,23 @@ public final class DataEncoding {
 	 */
 	
 	public static void main(String[] args) {
-		int[] inputBytes = encodeString(Main.INPUT, QRCodeInfos.getMaxInputLength(Main.VERSION));
-		int[] encodedData = addInformations(inputBytes);
-		int[] data = fillSequence(encodedData, QRCodeInfos.getCodeWordsLength(Main.VERSION));
-		int[] dataCorrection = addErrorCorrection(data, QRCodeInfos.getECCLength(Main.VERSION));
-		bytesToBinaryArray(dataCorrection);
+		
+		boolean[] encodedMessage = byteModeEncoding(Main.INPUT, Main.VERSION);
+		for(boolean i : encodedMessage) {
+			System.out.println(i);
+		}
 	}
 	
 	public static boolean[] byteModeEncoding(String input, int version) {
 		// TODO Implementer
 		
-		return null;
+		int[] inputBytes = encodeString(Main.INPUT, QRCodeInfos.getMaxInputLength(Main.VERSION));
+		int[] encodedData = addInformations(inputBytes);
+		int[] data = fillSequence(encodedData, QRCodeInfos.getCodeWordsLength(Main.VERSION));
+		int[] dataCorrection = addErrorCorrection(data, QRCodeInfos.getECCLength(Main.VERSION));
+		boolean[] finalBinaryArray = bytesToBinaryArray(dataCorrection);
+		
+		return finalBinaryArray;
 	}
 
 	/**
@@ -59,6 +65,7 @@ public final class DataEncoding {
 	 */
 	public static int[] addInformations(int[] inputBytes) {
 		// TODO Implementer
+		
 		int lgth = inputBytes.length & 0xFF ; //49
 		int prefix = 0b0100 ;
 		
