@@ -11,21 +11,21 @@ public final class DataEncoding {
 	 * @return
 	 */
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		
 		boolean[] encodedMessage = byteModeEncoding(Main.INPUT, Main.VERSION);
-		for(boolean i : encodedMessage) {
+		/*for(boolean i : encodedMessage) {
 			System.out.println(i);
 		}
-	}
+	}*/
 	
 	public static boolean[] byteModeEncoding(String input, int version) {
 		// TODO Implementer
 		
-		int[] inputBytes = encodeString(Main.INPUT, QRCodeInfos.getMaxInputLength(Main.VERSION));
+		int[] inputBytes = encodeString(input, QRCodeInfos.getMaxInputLength(version));
 		int[] encodedData = addInformations(inputBytes);
-		int[] data = fillSequence(encodedData, QRCodeInfos.getCodeWordsLength(Main.VERSION));
-		int[] dataCorrection = addErrorCorrection(data, QRCodeInfos.getECCLength(Main.VERSION));
+		int[] data = fillSequence(encodedData, QRCodeInfos.getCodeWordsLength(version));
+		int[] dataCorrection = addErrorCorrection(data, QRCodeInfos.getECCLength(version));
 		boolean[] finalBinaryArray = bytesToBinaryArray(dataCorrection);
 		
 		return finalBinaryArray;
@@ -104,25 +104,25 @@ public final class DataEncoding {
 	 */
 	public static int[] fillSequence(int[] encodedData, int finalLength) {
 		// TODO Implementer
-		
+		//Si il reste de la place, => fill le tableau sinon ne fait rien 
 		if(encodedData.length < finalLength) {
 			
-			
+			//nouveau tableau de taille finalLength qui va contenir l'ancien plus 236 et 17 jusqu'à finalLength
 			int[] data = new int[finalLength];
 			
 			for(int i = 0 ; i < encodedData.length ; ++i) {
 				data[i] = encodedData[i];
 			}
-			int j=0;
+			boolean j = false; 
 			
 			for(int i = encodedData.length ; i < finalLength ; ++i ) {
 				
-				if(j == 0) {
-					data[i] = 236 & 0xFF;
-					j = 1;
-				} else if(j == 1) {
-					data[i] = 17 & 0xFF;
-					j = 0;
+				if(j == false) {
+					data[i] = 236;
+					j = true;
+				} else {
+					data[i] = 17;
+					j = false;
 				}
 				
 			}
