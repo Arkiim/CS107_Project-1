@@ -228,20 +228,4 @@ public final class DataEncoding {
 		return bitIsolator;
 	}
 	
-	
-	//Pour tester/afficher la valeur en binaire du message encodé en ayant un output sous format binaire (dans un string) 
-	public static String toBinaryStr(int X) { 
-		String binaryX = Integer.toBinaryString(X);
-		int length = binaryX.length();
-		
-		for(int i = 0; i < 8 - length; i ++) {
-			binaryX = "0" + binaryX;
-		}
-		
-		//System.out.println(binaryX);
-		
-		return binaryX;
-	}
-
-	
 }

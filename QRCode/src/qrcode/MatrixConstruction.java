@@ -2,6 +2,11 @@ package qrcode;
 
 public class MatrixConstruction {
 
+	public static void main(String[] args) {
+		int [][] initializedMatrix = initializeMatrix(Main.VERSION);
+	}
+	
+	
 	/*
 	 * Constants defining the color in ARGB format
 	 * 
@@ -14,6 +19,8 @@ public class MatrixConstruction {
 	// TODO add constant for White pixel
 	// TODO add constant for Black pixel
 	
+	public static int W = 0xFF_FF_FF_FF;
+	public static int B = 0xFF_00_00_00;
 
 	// ...  MYDEBUGCOLOR = ...;
 	// feel free to add your own colors for debugging purposes
@@ -82,6 +89,11 @@ public class MatrixConstruction {
 	 */
 	public static int[][] initializeMatrix(int version) {
 		// TODO Implementer
+		
+		int matrixSize =  QRCodeInfos.getMatrixSize(version);
+		int[][] initializiedMatrix = new int[matrixSize][matrixSize];
+		
+		
 		return null;
 	}
 
