@@ -117,19 +117,22 @@ public class MatrixConstruction {
 	public static void addFinderPatterns(int[][] matrix) {
 		// TODO Implementer	
 		
-		//top left corner 2row and 2 column to fill, therefor => for running 2 time filling each time the right column & row | atl = (a top left)
+		//top left corner 2row and 2 column to fill, therefore => for running 2 time filling each time the right column & row | atl = (a top left)
 		int atl = 0, btl = 0, ctl = 7 ;
 		for(int i = 0 ; i < 2 ; ++i ) {
 			matrix = addRowB(matrix, atl, btl, ctl);
 			matrix = addColB(matrix, btl, atl, ctl);
 			btl += 6;
 		}
+		matrix = addRowW(matrix, 0, 7, 8);
+		matrix = addColW(matrix, 7, 0, 8 );
+		matrix = addRowW(matrix, 1, 1, 6);
+		matrix = addRowW(matrix, 1, 5, 6);
+		matrix = addColW(matrix, 1, 1, 5);
+		matrix = addColW(matrix, 5, 1, 5);
 		
-		/*matrix = addRowB(matrix, 0, 0, 7);
-		matrix = addColB(matrix, 0, 0, 7);
-		matrix = addRowB(matrix, 0, 6, 7);
-		matrix = addColB(matrix, 6, 0, 7);*/
 		
+		//center of top left corner
 		for(int row = 2 ; row < 5 ; ++row) {
 			matrix = addRowB(matrix, 2,row,5);
 		}
@@ -138,17 +141,29 @@ public class MatrixConstruction {
 		matrix = addRowB(matrix, 18, 0, 24);
 		matrix = addColB(matrix, 18, 0, 6);
 		matrix = addRowB(matrix, 18, 6, 24);
-		matrix = addColB(matrix, 24, 0, 6);
+		matrix = addColB(matrix, 24, 0, 7);
 		
-	
+		matrix = addRowW(matrix, 17, 7, 25);
+		matrix = addColW(matrix, 17, 0, 8);
+		
+		//center of top right corner
 		for(int row = 2 ; row < 5 ; ++row) {
 			matrix = addRowB(matrix, 20, row, 23);
 		}
+	
+		//bottom left corner 
+		matrix = addRowB(matrix, 0, 18, 7);
+		matrix = addColB(matrix, 0, 18, 24);
+		matrix = addRowB(matrix, 0, 24, 7);
+		matrix = addColB(matrix, 6, 18, 24);
 		
+		matrix = addRowW(matrix, 0, 17, 8);
+		matrix = addColW(matrix, 7, 17, 25);
 		
-		/*matrix = addRowB(matrix, 2, 2, 5);
-		matrix = addRowB(matrix, 2, 3, 5);
-		matrix = addRowB(matrix, 2, 4, 5);*/
+		//center of bottom left corner
+		for(int row = 20 ; row < 23 ; ++row) {
+			matrix = addRowB(matrix, 2, row, 5);
+		}
 		
 		for(int col = 0 ; col < 25 ; ++col) {
 			System.out.print("\n");
@@ -232,6 +247,23 @@ public class MatrixConstruction {
 		
 		for (; row < maxRow ; ++row) {
 			matrix = addB(matrix, col, row);
+		}
+		return matrix;
+	}
+	
+	//same but with white pixels
+	public static int[][] addRowW (int[][] matrix, int col, int row, int maxCol){
+		
+		for (; col < maxCol ; ++col) {
+			matrix = addW(matrix, col, row);
+		}
+		return matrix;
+	}
+	
+	public static int[][] addColW (int[][] matrix, int col, int row, int maxRow){
+		
+		for (; row < maxRow ; ++row) {
+			matrix = addW(matrix, col, row);
 		}
 		return matrix;
 	}
