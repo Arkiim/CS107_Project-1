@@ -4,6 +4,10 @@ public class MatrixConstruction {
 
 	public static void main(String[] args) {
 		int [][] initializedMatrix = initializeMatrix(Main.VERSION);
+		//int [][] matrix = addB(initializedMatrix, 1, 1);
+		//matrix = addW(matrix, 1,2);
+		//System.out.println(matrix[1][1] + ", " + matrix[1][2]);
+		addFinderPatterns(initializedMatrix);
 	}
 	
 	
@@ -24,7 +28,12 @@ public class MatrixConstruction {
 
 	// ...  MYDEBUGCOLOR = ...;
 	// feel free to add your own colors for debugging purposes
+	
+	public static int R = 0xFF_FF_00_00;
+	public static int G = 0xFF_00_FF_00;
+	public static int Blue = 0xFF_00_00_FF;
 
+	
 	/**
 	 * Create the matrix of a QR code with the given data.
 	 * 
@@ -74,6 +83,8 @@ public class MatrixConstruction {
 	 */
 	public static int[][] constructMatrix(int version, int mask) {
 		// TODO Implementer
+		int[][] matrix = initializeMatrix(version);
+		
 		return null;
 
 	}
@@ -91,10 +102,10 @@ public class MatrixConstruction {
 		// TODO Implementer
 		
 		int matrixSize =  QRCodeInfos.getMatrixSize(version);
-		int[][] initializiedMatrix = new int[matrixSize][matrixSize];
+		int[][] matrix = new int[matrixSize][matrixSize];
 		
 		
-		return null;
+		return matrix;
 	}
 
 	/**
@@ -104,7 +115,48 @@ public class MatrixConstruction {
 	 *            the 2D array to modify: where to add the patterns
 	 */
 	public static void addFinderPatterns(int[][] matrix) {
-		// TODO Implementer
+		// TODO Implementer	
+		
+		//top left corner 2row and 2 column to fill, therefor => for running 2 time filling each time the right column & row | atl = (a top left)
+		int atl = 0, btl = 0, ctl = 7 ;
+		for(int i = 0 ; i < 2 ; ++i ) {
+			matrix = addRowB(matrix, atl, btl, ctl);
+			matrix = addColB(matrix, btl, atl, ctl);
+			btl += 6;
+		}
+		
+		/*matrix = addRowB(matrix, 0, 0, 7);
+		matrix = addColB(matrix, 0, 0, 7);
+		matrix = addRowB(matrix, 0, 6, 7);
+		matrix = addColB(matrix, 6, 0, 7);*/
+		
+		for(int row = 2 ; row < 5 ; ++row) {
+			matrix = addRowB(matrix, 2,row,5);
+		}
+		
+		//top right corner
+		matrix = addRowB(matrix, 18, 0, 24);
+		matrix = addColB(matrix, 18, 0, 6);
+		matrix = addRowB(matrix, 18, 6, 24);
+		matrix = addColB(matrix, 24, 0, 6);
+		
+	
+		for(int row = 2 ; row < 5 ; ++row) {
+			matrix = addRowB(matrix, 20, row, 23);
+		}
+		
+		
+		/*matrix = addRowB(matrix, 2, 2, 5);
+		matrix = addRowB(matrix, 2, 3, 5);
+		matrix = addRowB(matrix, 2, 4, 5);*/
+		
+		for(int col = 0 ; col < 25 ; ++col) {
+			System.out.print("\n");
+			for( int row = 0; row < 25 ; ++row) {
+				System.out.println("matrix["+col+"]["+row+"] = " + matrix[col][row]);
+			}
+		}
+		
 	}
 
 	/**
@@ -152,6 +204,38 @@ public class MatrixConstruction {
 		// TODO Implementer
 	}
 
+	public static int[][] addB(int[][] matrix, int col, int row) {
+		
+		matrix[col][row] = B;
+		
+		return matrix;
+	}
+	
+	public static int[][] addW(int[][] matrix, int col, int row ){
+		
+		matrix[col][row] = W;
+		
+		return matrix;
+	}
+	
+	//fills the row number : row, from col to maxCol
+	public static int[][] addRowB (int[][] matrix, int col, int row, int maxCol){
+		
+		for (; col < maxCol ; ++col) {
+			matrix = addB(matrix, col, row);
+		}
+		return matrix;
+	}
+	
+	//fills the column number : col, from row to maxRow
+	public static int[][] addColB (int[][] matrix, int col, int row, int maxRow){
+		
+		for (; row < maxRow ; ++row) {
+			matrix = addB(matrix, col, row);
+		}
+		return matrix;
+	}
+	
 	/*
 	 * =======================================================================
 	 * ****************************** PART 3 *********************************
@@ -186,7 +270,7 @@ public class MatrixConstruction {
 		// TODO Implementer
 
 	}
-
+	
 	/*
 	 * =======================================================================
 	 * 
@@ -237,5 +321,6 @@ public class MatrixConstruction {
 	
 		return 0;
 	}
+	
 
 }
