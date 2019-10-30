@@ -2,14 +2,14 @@ package qrcode;
 
 public class MatrixConstruction {
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		int [][] initializedMatrix = initializeMatrix(Main.VERSION);
 		//int [][] matrix = addB(initializedMatrix, 1, 1);
 		//matrix = addW(matrix, 1,2);
 		//System.out.println(matrix[1][1] + ", " + matrix[1][2]);
 		addFinderPatterns(initializedMatrix);
 	}
-	
+	*/
 	
 	/*
 	 * Constants defining the color in ARGB format
@@ -84,8 +84,9 @@ public class MatrixConstruction {
 	public static int[][] constructMatrix(int version, int mask) {
 		// TODO Implementer
 		int[][] matrix = initializeMatrix(version);
+		addFinderPatterns(matrix);
 		
-		return null;
+		return matrix;
 
 	}
 
@@ -117,60 +118,63 @@ public class MatrixConstruction {
 	public static void addFinderPatterns(int[][] matrix) {
 		// TODO Implementer	
 		
-		//top left corner 2row and 2 column to fill, therefore => for running 2 time filling each time the right column & row | atl = (a top left)
-		int atl = 0, btl = 0, ctl = 7 ;
-		for(int i = 0 ; i < 2 ; ++i ) {
-			matrix = addRowB(matrix, atl, btl, ctl);
-			matrix = addColB(matrix, btl, atl, ctl);
-			btl += 6;
-		}
-		matrix = addRowW(matrix, 0, 7, 8);
-		matrix = addColW(matrix, 7, 0, 8 );
-		matrix = addRowW(matrix, 1, 1, 6);
-		matrix = addRowW(matrix, 1, 5, 6);
-		matrix = addColW(matrix, 1, 1, 5);
-		matrix = addColW(matrix, 5, 1, 5);
-		
-		
-		//center of top left corner
-		for(int row = 2 ; row < 5 ; ++row) {
-			matrix = addRowB(matrix, 2,row,5);
+		// horizontal black lines of QRCode  (all corners)
+		int aH= 0, bH = 0,  C = 7 ;
+		for(int i = 0 ; i < 2 ; ++i) {
+			addRowB(matrix, aH, bH, C); //top left corner
+			addRowB(matrix, aH+18, bH, C+17); //top right corner
+			addRowB(matrix, aH, bH+18, C); //bottom left corner
+			bH+=6;
 		}
 		
-		//top right corner
-		matrix = addRowB(matrix, 18, 0, 24);
-		matrix = addColB(matrix, 18, 0, 6);
-		matrix = addRowB(matrix, 18, 6, 24);
-		matrix = addColB(matrix, 24, 0, 7);
+		//vertical black lines of QRCode
+		int aV = 0, bV = 0 ;
+		for(int i = 0 ; i < 2 ; ++i) {
+			addColB(matrix, aV, bV, C); //top left
+			addColB(matrix, aV+18, bV, C); // top right
+			addColB(matrix, aV, bV+18, C+17); // bottom left
+			aV += 6;
+		}
 		
-		matrix = addRowW(matrix, 17, 7, 25);
-		matrix = addColW(matrix, 17, 0, 8);
-		
-		//center of top right corner
+		//black lines in center 
+		int rowBottomLeft = 20; 
 		for(int row = 2 ; row < 5 ; ++row) {
-			matrix = addRowB(matrix, 20, row, 23);
+			addRowB(matrix, 2, row, 5);
+			addRowB(matrix, 20, row, 23);
+			addRowB(matrix, 2, rowBottomLeft, 5);
+			++rowBottomLeft;
+		}
+		
+		// white lines inside pattern
+		int aW = 1, bW = 1, CW = 6;
+		for (int i = 0 ; i < 2 ; ++i) {
+			addRowW(matrix, aW, bW, CW );
+			addRowW(matrix, aW+18, bW, CW+18);
+			addRowW(matrix, aW, bW+18, CW);
+			addColW(matrix, bW, aW, CW);
+			addColW(matrix, bW+18, aW, CW);
+			addColW(matrix, bW, aW+18, CW+18);
+			bW += 4;
 		}
 	
-		//bottom left corner 
-		matrix = addRowB(matrix, 0, 18, 7);
-		matrix = addColB(matrix, 0, 18, 24);
-		matrix = addRowB(matrix, 0, 24, 7);
-		matrix = addColB(matrix, 6, 18, 24);
-		
-		matrix = addRowW(matrix, 0, 17, 8);
-		matrix = addColW(matrix, 7, 17, 25);
-		
-		//center of bottom left corner
-		for(int row = 20 ; row < 23 ; ++row) {
-			matrix = addRowB(matrix, 2, row, 5);
+		//horizontal white lines outside pattern
+		aW = 0; bW = 7; CW = 8;
+		for(int i = 0 ; i < 2 ; ++i) {
+			addRowW(matrix, aW, bW, CW); // top left and top right
+			addRowW(matrix, 0, 17, 8); //bottom left
+			addColW(matrix, bW, aW, CW); //top left and bottom left
+			addColW(matrix, 17, 0, 8);
+			aW += 17;
+			CW += 17;
 		}
-		
-		for(int col = 0 ; col < 25 ; ++col) {
+
+	
+		/*for(int col = 0 ; col < 25 ; ++col) {
 			System.out.print("\n");
 			for( int row = 0; row < 25 ; ++row) {
 				System.out.println("matrix["+col+"]["+row+"] = " + matrix[col][row]);
 			}
-		}
+		}*/
 		
 	}
 
@@ -219,53 +223,51 @@ public class MatrixConstruction {
 		// TODO Implementer
 	}
 
-	public static int[][] addB(int[][] matrix, int col, int row) {
+	public static void addB(int[][] matrix, int col, int row) {
 		
 		matrix[col][row] = B;
 		
-		return matrix;
 	}
 	
-	public static int[][] addW(int[][] matrix, int col, int row ){
+	public static void addW(int[][] matrix, int col, int row ){
 		
 		matrix[col][row] = W;
 		
-		return matrix;
 	}
 	
 	//fills the row number : row, from col to maxCol
-	public static int[][] addRowB (int[][] matrix, int col, int row, int maxCol){
+	public static void addRowB (int[][] matrix, int col, int row, int maxCol){
 		
 		for (; col < maxCol ; ++col) {
-			matrix = addB(matrix, col, row);
+			addB(matrix, col, row);
 		}
-		return matrix;
+		
 	}
 	
 	//fills the column number : col, from row to maxRow
-	public static int[][] addColB (int[][] matrix, int col, int row, int maxRow){
+	public static void addColB (int[][] matrix, int col, int row, int maxRow){
 		
 		for (; row < maxRow ; ++row) {
-			matrix = addB(matrix, col, row);
+			addB(matrix, col, row);
 		}
-		return matrix;
+
 	}
 	
 	//same but with white pixels
-	public static int[][] addRowW (int[][] matrix, int col, int row, int maxCol){
+	public static void addRowW (int[][] matrix, int col, int row, int maxCol){
 		
 		for (; col < maxCol ; ++col) {
-			matrix = addW(matrix, col, row);
+			addW(matrix, col, row);
 		}
-		return matrix;
+
 	}
 	
-	public static int[][] addColW (int[][] matrix, int col, int row, int maxRow){
+	public static void addColW (int[][] matrix, int col, int row, int maxRow){
 		
 		for (; row < maxRow ; ++row) {
-			matrix = addW(matrix, col, row);
+			addW(matrix, col, row);
 		}
-		return matrix;
+		
 	}
 	
 	/*
