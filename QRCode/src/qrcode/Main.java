@@ -7,7 +7,7 @@ public class Main {
 	/*
 	 * Parameters
 	 */
-	public static final int VERSION = 4;
+	public static final int VERSION = 3;
 	public static final int MASK = 0;
 	public static final int SCALING = 20;
 

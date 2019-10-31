@@ -414,7 +414,56 @@ public class MatrixConstruction {
 	 */
 	public static int maskColor(int col, int row, boolean dataBit, int masking) {
 		// TODO Implementer
-		return 0;
+		
+		int maskedBit;
+		
+		int cPlsR = (col + row) ; //col Plus Row
+		int rowInt_2 = (int) row / 2 ; //makes sure to keep the integer portion of the division
+		int colInt_3 = (int) col / 3 ;
+		int cTmsR = (col*row) ; // col Times Row
+		int cTmsRMd2 = cTmsR % 2 ; // col Times Row Modulo 2
+		int cTmsRMd3 = cTmsR % 3 ; 
+		
+		switch(masking) {
+		
+		case 0 :
+			//masking a bit by negating it's binary value and then assigning the method ;
+			return (cPlsR % 2 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ; 
+		
+			
+		case 1 :
+			return (row % 2 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
+			
+		
+		case 2 :
+			return (col % 3 == 0) ?  maskedBit = getVal(!dataBit) : getVal(dataBit) ;
+			
+		
+		case 3 : 
+			return (cPlsR % 3 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
+		
+		
+		case 4:
+			return ((rowInt_2 + colInt_3) % 2 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
+		
+		
+		case 5 :
+			return (cTmsRMd2 + cTmsRMd3 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
+			
+		
+		case 6 :
+			return ((cTmsRMd2 + cTmsRMd3) % 2 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
+		
+		case 7 : 
+			return (( (cPlsR % 2) + cTmsRMd3 ) % 2 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
+		
+		default :
+			maskedBit = getVal(dataBit);
+		
+		}
+		
+		return maskedBit;
+		
 	}
 
 	/**
@@ -425,9 +474,22 @@ public class MatrixConstruction {
 	 * @param data
 	 *            the data to add
 	 */
+	
 	public static void addDataInformation(int[][] matrix, boolean[] data, int mask) {
 		// TODO Implementer
 
+	}
+	
+	public static int getVal(boolean bit) {
+		int value = 0;
+		
+		if (bit) {
+			value = B ;
+		} else {
+			value = W ;
+		}
+		
+		return value;		
 	}
 	
 	/*
