@@ -35,11 +35,13 @@ public final class DataEncoding {
 		// TODO Implementer
 		byte[] tabByte = input.getBytes(StandardCharsets.ISO_8859_1);
 		
+		//if the message is shorter than maxLength, reduce the sizes of the arrays
 		if(maxLength >= tabByte.length ) { 
 			maxLength = tabByte.length;
-		} // si le message prend moins de place que maxLength, réduit la taille des arrays
+		} 
 		
-		int[] inputBytes = new int[maxLength]; //ne prend que les maxLength premiers octets de tabVyte[]
+		//Only takes the maxLength first bytes of tabByte[]
+		int[] inputBytes = new int[maxLength]; 
 		
 		for(int i = 0 ; i < maxLength; ++i) {
 			inputBytes[i] = tabByte[i] & 0xFF; 
@@ -63,16 +65,21 @@ public final class DataEncoding {
 		
 		int[] encodedData = new int[inputBytes.length + 2] ;
 		
-		encodedData[0] = prefix << 4  | (lgth & 0b1111_0000) >> 4 ; // Conjonction logique(&) entre lgth et un octet où ses 4 bits de poids faibles sont à 0, pour être sûr de ne prendre que les 4 bits de poids fort
+		//logical conjonction(&) between lgth and a byte where its 4 lightest bits are 0 (and the heaviest at 1) to be sure that we only get the 4 heaviest bits
+		encodedData[0] = prefix << 4  | (lgth & 0b1111_0000) >> 4 ; // 
 		// 0100_0000 or 0000_0011  = 0100_0011
 		
-		encodedData[1] =  (lgth & 0b0000_1111) << 4 | inputBytes[0] >> 4 ; //0001_0000 or 0000_0101 = 0001_0101
+		encodedData[1] =  (lgth & 0b0000_1111) << 4 | inputBytes[0] >> 4 ; 
+		//0001_0000 or 0000_0101 = 0001_0101
 		
 		
-		for(int i = 2 ; i < encodedData.length - 1; ++i) { // le dernier élément sera ajouté hors de la boucle pour ne pas que l'algorithme aille chercher un 50e élément (hors des bornes) de inputBytes
+		//the last element will be added after the loop in such a way that, the program wont search for a 50th element of inputBytes[] which does not exist
+		for(int i = 2 ; i < encodedData.length - 1; ++i) { 
 			
-			int heavyB = inputBytes[i-2] & 0b0000_1111 ; // Prend seulement la moitié nécessaire et la décale pour pouvoir combiner les deux ( heavyB et lightB)
+			int heavyB = inputBytes[i-2] & 0b0000_1111 ; // takes only the part we need and then shift it to combine both element (heavyB and lightB)
+
 			int lightB = inputBytes[i-1] /*& 0b1111_0000*/;
+			
 			encodedData[i] =  heavyB << 4  | lightB >> 4 ;
 			
 		} 
@@ -97,10 +104,10 @@ public final class DataEncoding {
 	public static int[] fillSequence(int[] encodedData, int finalLength) {
 		// TODO Implementer
 		
-		//Si il reste de la place, => fill le tableau sinon ne fait rien 
+		// If there's any place left => fill the array otherwise do nothing
 		if(encodedData.length < finalLength) {
 			
-			//nouveau tableau de taille finalLength qui va contenir l'ancien plus 236 et 17 jusqu'à finalLength
+			//New array of size finalLength that will contain the older one plus 236 and 17 until finalLength
 			int[] data = new int[finalLength];
 			
 			for(int i = 0 ; i < encodedData.length ; ++i) {
@@ -142,13 +149,13 @@ public final class DataEncoding {
 		// TODO Implementer
 		
 		int[] correctionBytes = ErrorCorrectionEncoding.encode(encodedData , eccLength);
-		//tableau de taille égale à la somme de celle des autres tableaux
+		//Array of size equal to the sum of both other arrays
 		
 		int[] dataCorrection = new int[correctionBytes.length + encodedData.length]; 
 		
 		for(int i = 0; i < dataCorrection.length ; ++i ) {
 			
-			//Une fois que la valeur de i dépasse la taille du tableau comprenant les octet de encodedData, ce sont les eccLength octets de dataCorrection qui remplissent la fin du tableau final dataCorrection. 
+			//Once the value i is greater than the size of the array containing the bytes of encodedData, it is the eccLength bytes of dataCorrection that will fill the end of the final array dataCorrection 
 			if( i < encodedData.length ) {
 				dataCorrection[i] = encodedData[i] ;
 			} else {
@@ -178,7 +185,8 @@ public final class DataEncoding {
 		for(int k = 0 ; k < data.length ; ++k) {
 			
 			for(int j = 0 ; j < binValue[k].length ; ++j) {
-				//mets chaque array de 8 bits correspondant à un élément de data[] sous forme de valeur booléenne ("projette" le tableau en 2d dans un tableau "simple" en booléen)
+				
+				//puts each array of 8 btis corresponding to an element of data[] into a boolean ( takes the 2d array to fit in the simple 1 dimension boolean one )
 				if(binValue[k][j] == 1) {
 					binaryArray[i] = true;
 				} else {
@@ -198,10 +206,13 @@ public final class DataEncoding {
 		int[][]binValue = new int[data.length][8];
 		
 		for(int i = 0 ; i < data.length ; ++i) {
-			//fait un array de 8 élément pour stocker les 8 bits d'un entier. Puis répète tout ça pour chaque élément de data[]
+			
+			//makes an array of 8 element to put all the 8 bits of an integer. Then repeat that for all element of data[]
 			for(int j = 0 ; j< 8 ; ++j) {
+				
 				binValue[i][j] = (bitTbl[j] & data[i]) >> (7-j) ;
-				//décale la valeur de 7-j pour que la valeur soit toujours soit 0, soit 1 (bitTbl commence à 1000_0000)
+				//shift the value of 7-j in a way that the value will always be 0 or 1 (bitTbl starts at 1000_0000)
+
 			}
 			
 		}
@@ -213,10 +224,13 @@ public final class DataEncoding {
 		
 		int[] bitIsolator = new int[8]; 
 		
-		//rempli un tableau d'octet avec 1 bit par octet à une place différente à chaque fois pour utiliser la même "astuce" que dans la méthode addInformations()
+		//Fill an array of bytes with 1 bit per bytes each one at a different position, to use the same "trick" as before in the method addInformations()
+		
 		for(int i = 0; i < 8 ; ++i) {
 			bitIsolator[i] = 0b1000_0000 >> i;
-		} //tableau commence à 1000_000 et fini à 0000_0001 
+		} 
+		
+		//Array starts at 1000_0000 and finishes at 0000_0001
 		
 		return bitIsolator;
 	}
