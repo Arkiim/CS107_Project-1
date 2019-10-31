@@ -11,11 +11,11 @@ public class Debug {
 		 */
 		MatrixConstructionTest01 test1 = new MatrixConstructionTest01();
 
-		//test1.testInitializePatternsV1();
+		test1.testInitializePatternsV1();
 		
 		//test1.testInitializePatternsV4();
 		
-		//test1.testAddFormatInformationV1M0();
+		test1.testAddFormatInformationV1M0();
 		
 		//test1.testAddFormatInformationV4M5();
 		

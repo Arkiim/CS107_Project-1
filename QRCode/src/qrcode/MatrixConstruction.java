@@ -85,7 +85,9 @@ public class MatrixConstruction {
 		// TODO Implementer
 		int[][] matrix = initializeMatrix(version);
 		addFinderPatterns(matrix);
-		
+		addAlignmentPatterns(matrix, version);
+		addTimingPatterns(matrix);
+		addDarkModule(matrix);
 		return matrix;
 
 	}
@@ -117,64 +119,84 @@ public class MatrixConstruction {
 	 */
 	public static void addFinderPatterns(int[][] matrix) {
 		// TODO Implementer	
+		int size = matrix.length;
 		
-		// horizontal black lines of QRCode  (all corners)
-		int aH= 0, bH = 0,  C = 7 ;
+		int b = 0,  size_7 = size - 7,  C = 7 ;
+		
 		for(int i = 0 ; i < 2 ; ++i) {
-			addRowB(matrix, aH, bH, C); //top left corner
-			addRowB(matrix, aH+18, bH, C+17); //top right corner
-			addRowB(matrix, aH, bH+18, C); //bottom left corner
-			bH+=6;
+			
+			// horizontal black lines of QRCode
+			
+			addRowB(matrix, 0, b, C); //top left corner
+			addRowB(matrix, size-7, b, size); //top right corner
+			addRowB(matrix, 0, size_7, C); //bottom left corner
+			
+			//vertical black lines of QRCode
+			
+			addColB(matrix, b, 0, C); //top left
+			addColB(matrix, size_7, 0, C); // top right
+			addColB(matrix, b , size-7, size); // bottom left
+			
+			b += 6;
+			size_7 += 6;
+			
 		}
 		
-		//vertical black lines of QRCode
-		int aV = 0, bV = 0 ;
-		for(int i = 0 ; i < 2 ; ++i) {
-			addColB(matrix, aV, bV, C); //top left
-			addColB(matrix, aV+18, bV, C); // top right
-			addColB(matrix, aV, bV+18, C+17); // bottom left
-			aV += 6;
-		}
+		//black lines in center
 		
-		//black lines in center 
-		int rowBottomLeft = 20; 
+		int size_5 = size-5;
+		
 		for(int row = 2 ; row < 5 ; ++row) {
+			
 			addRowB(matrix, 2, row, 5);
-			addRowB(matrix, 20, row, 23);
-			addRowB(matrix, 2, rowBottomLeft, 5);
-			++rowBottomLeft;
+			addRowB(matrix, size-5 , row, size-2);
+			addRowB(matrix, 2, size_5, 5);
+			
+			++size_5 ;
+			
 		}
+		
 		
 		// white lines inside pattern
-		int aW = 1, bW = 1, CW = 6;
+		
+		int size_6 = size-6;
+		int bW = 1, CW = C-1;
+		
 		for (int i = 0 ; i < 2 ; ++i) {
-			addRowW(matrix, aW, bW, CW );
-			addRowW(matrix, aW+18, bW, CW+18);
-			addRowW(matrix, aW, bW+18, CW);
-			addColW(matrix, bW, aW, CW);
-			addColW(matrix, bW+18, aW, CW);
-			addColW(matrix, bW, aW+18, CW+18);
+			
+			//horizontal whites lines
+			
+			addRowW(matrix, 1, bW, CW );
+			addRowW(matrix, size-6, bW, size-1);
+			addRowW(matrix, 1, size_6, CW);
+			
+			//vertical whites lines
+			
+			addColW(matrix, bW, size-6, size-1);
+			addColW(matrix, size_6, 1, CW);
+			addColW(matrix, bW, 1, CW);
+			
 			bW += 4;
+			size_6 += 4;
+				
 		}
 	
-		//horizontal white lines outside pattern
-		aW = 0; bW = 7; CW = 8;
+		// white lines outside pattern
+		
+		int aW = 0; CW = 8;
+		
 		for(int i = 0 ; i < 2 ; ++i) {
-			addRowW(matrix, aW, bW, CW); // top left and top right
-			addRowW(matrix, 0, 17, 8); //bottom left
-			addColW(matrix, bW, aW, CW); //top left and bottom left
-			addColW(matrix, 17, 0, 8);
-			aW += 17;
-			CW += 17;
+			
+			addRowW(matrix, aW, 7, CW); // top left and top right row
+			addRowW(matrix, 0, size-8, 8); //bottom left row
+			addColW(matrix, 7, aW, CW); //top left and bottom left column
+			addColW(matrix, size-8, 0, 8); // top right column
+			
+			aW += size-8;
+			CW += size-8;
+			
 		}
-
-	
-		/*for(int col = 0 ; col < 25 ; ++col) {
-			System.out.print("\n");
-			for( int row = 0; row < 25 ; ++row) {
-				System.out.println("matrix["+col+"]["+row+"] = " + matrix[col][row]);
-			}
-		}*/
+		
 		
 	}
 
@@ -189,8 +211,29 @@ public class MatrixConstruction {
 	 */
 	public static void addAlignmentPatterns(int[][] matrix, int version) {
 		// TODO Implementer
+	if (version > 1) {
+	
+		int size = matrix.length ;
+		
+			int size_9 = size-9;
+			int size_8 = size-8;
+			for(int i = 0 ; i < 2 ; ++i) {
+			
+				addRowB(matrix, size-9, size_9 , size-4);
+				addColB(matrix, size_9, size-9, size-4);
+				addRowW(matrix, size-8, size_8, size-5);
+				addW(matrix, size_8, size-7);
+				addB(matrix, size-7, size-7);
+				size_9 += 4;
+				size_8 += 2;
+			
+			/*addRowSwitchBW(matrix, size-8, 8, size);
+			addColSwitchBW(matrix, 8, size-8, size);*/
+		
+			}
+		
+		}
 	}
-
 	/**
 	 * Add the timings patterns
 	 * 
@@ -199,8 +242,12 @@ public class MatrixConstruction {
 	 */
 	public static void addTimingPatterns(int[][] matrix) {
 		// TODO Implementer
+		int size = matrix.length ;
+		addColSwitchBW(matrix, 6, 8, size-8);
+		addRowSwitchBW(matrix, 8, 6,size-8 );
+		
 	}
-
+	
 	/**
 	 * Add the dark module to the matrix
 	 * 
@@ -209,8 +256,11 @@ public class MatrixConstruction {
 	 */
 	public static void addDarkModule(int[][] matrix) {
 		// TODO Implementer
+		int size = matrix.length ;
+		addB(matrix, 8, size-8);
+		
 	}
-
+	
 	/**
 	 * Add the format information to the matrix
 	 * 
@@ -261,13 +311,40 @@ public class MatrixConstruction {
 		}
 
 	}
-	
+
 	public static void addColW (int[][] matrix, int col, int row, int maxRow){
 		
 		for (; row < maxRow ; ++row) {
 			addW(matrix, col, row);
 		}
 		
+	}
+	
+	//same as  before but now switching black and white
+	public static void addColSwitchBW (int[][] matrix, int col, int row, int maxRow){
+		boolean i = false;
+		for (; row < maxRow ; ++row) {
+			if(i == false) {
+				addB(matrix, col, row);
+				i = true;
+			} else {
+				addW(matrix, col, row);
+				i = false;
+			}
+		}	
+	}
+	
+	public static void addRowSwitchBW (int[][] matrix, int col, int row, int maxCol){
+		boolean i = false;
+		for (; col < maxCol ; ++col) {
+			if(i == false) {
+				addB(matrix, col, row);
+				i = true;
+			} else {
+				addW(matrix, col, row);
+				i = false;
+			}
+		}	
 	}
 	
 	/*
