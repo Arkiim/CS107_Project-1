@@ -1,15 +1,6 @@
 package qrcode;
 
 public class MatrixConstruction {
-
-	/*public static void main(String[] args) {
-		int [][] initializedMatrix = initializeMatrix(Main.VERSION);
-		//int [][] matrix = addB(initializedMatrix, 1, 1);
-		//matrix = addW(matrix, 1,2);
-		//System.out.println(matrix[1][1] + ", " + matrix[1][2]);
-		addFinderPatterns(initializedMatrix);
-	}
-	*/
 	
 	/*
 	 * Constants defining the color in ARGB format
@@ -88,6 +79,7 @@ public class MatrixConstruction {
 		addAlignmentPatterns(matrix, version);
 		addTimingPatterns(matrix);
 		addDarkModule(matrix);
+		addFormatInformation(matrix, mask);
 		return matrix;
 
 	}
@@ -211,12 +203,13 @@ public class MatrixConstruction {
 	 */
 	public static void addAlignmentPatterns(int[][] matrix, int version) {
 		// TODO Implementer
-	if (version > 1) {
+		if (version > 1) {
 	
-		int size = matrix.length ;
+			int size = matrix.length ;
 		
 			int size_9 = size-9;
 			int size_8 = size-8;
+			
 			for(int i = 0 ; i < 2 ; ++i) {
 			
 				addRowB(matrix, size-9, size_9 , size-4);
@@ -226,9 +219,6 @@ public class MatrixConstruction {
 				addB(matrix, size-7, size-7);
 				size_9 += 4;
 				size_8 += 2;
-			
-			/*addRowSwitchBW(matrix, size-8, 8, size);
-			addColSwitchBW(matrix, 8, size-8, size);*/
 		
 			}
 		
@@ -243,6 +233,7 @@ public class MatrixConstruction {
 	public static void addTimingPatterns(int[][] matrix) {
 		// TODO Implementer
 		int size = matrix.length ;
+		
 		addColSwitchBW(matrix, 6, 8, size-8);
 		addRowSwitchBW(matrix, 8, 6,size-8 );
 		
@@ -258,7 +249,6 @@ public class MatrixConstruction {
 		// TODO Implementer
 		int size = matrix.length ;
 		addB(matrix, 8, size-8);
-		
 	}
 	
 	/**
@@ -271,6 +261,27 @@ public class MatrixConstruction {
 	 */
 	public static void addFormatInformation(int[][] matrix, int mask) {
 		// TODO Implementer
+		
+		boolean[] formatSequence = QRCodeInfos.getFormatSequence(mask);
+		
+		int size = matrix.length;
+		
+		//arguments passed in methods addOnGivenArray() : matrix on which you want to add the data, array from where the data come from, position (column,row), part of the array you want (e.g. from i=0 to i=5 included)
+		// and finally if you want them from lower, column or row, to a higher one (0, descending) or the opposite (1 ascending)
+		
+		//top left corner
+		addOnGivenArrayRow(matrix, formatSequence, 0, 8, 0, 5, 0);
+		addOnGivenArrayRow(matrix, formatSequence, 7, 8, 6, 7, 0);
+		addOnGivenArrayCol(matrix, formatSequence, 8, 7, 8, 8, 0);
+		addOnGivenArrayCol(matrix, formatSequence, 8, 5, 9, 14, 1);
+		
+		//top right corner
+		addOnGivenArrayRow(matrix, formatSequence, size-8, 8, 7, 14, 0);
+		
+		//bottom left corner 
+		addOnGivenArrayCol(matrix, formatSequence, 8, size-1, 0, 6, 1);
+		
+		
 	}
 
 	public static void addB(int[][] matrix, int col, int row) {
@@ -345,6 +356,43 @@ public class MatrixConstruction {
 				i = false;
 			}
 		}	
+	}
+	
+	public static void addOnGivenArrayRow (int[][] matrix, boolean[] givenArray, int col, int row, int index, int maxIndex, int asc_desc) {
+		
+		for(; index <= maxIndex ; ++index) {
+			
+			if(givenArray[index] == true) {
+				addB(matrix, col, row);
+			} else {
+				addW(matrix,col,row);
+			}
+			
+			if( asc_desc == 1) {
+				--col;
+			} else {
+				++col;
+			}
+		}
+		
+	}
+	
+	public static void addOnGivenArrayCol (int[][] matrix, boolean[] givenArray, int col, int row, int index, int maxIndex, int asc_desc) {
+		
+		for(; index <= maxIndex ; ++index) {
+			
+			if(givenArray[index] == true) {
+				addB(matrix, col, row);
+			} else {
+				addW(matrix,col,row);
+			}
+			if (asc_desc == 1) {
+				--row;
+			} else {
+				++row;
+			}
+		}
+		
 	}
 	
 	/*

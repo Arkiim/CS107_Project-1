@@ -11,14 +11,6 @@ public final class DataEncoding {
 	 * @return
 	 */
 	
-	/*public static void main(String[] args) {
-		
-		boolean[] encodedMessage = byteModeEncoding(Main.INPUT, Main.VERSION);
-		/*for(boolean i : encodedMessage) {
-			System.out.println(i);
-		}
-	}*/
-	
 	public static boolean[] byteModeEncoding(String input, int version) {
 		// TODO Implementer
 		
@@ -104,6 +96,7 @@ public final class DataEncoding {
 	 */
 	public static int[] fillSequence(int[] encodedData, int finalLength) {
 		// TODO Implementer
+		
 		//Si il reste de la place, => fill le tableau sinon ne fait rien 
 		if(encodedData.length < finalLength) {
 			
