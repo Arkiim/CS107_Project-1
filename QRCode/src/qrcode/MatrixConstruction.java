@@ -417,18 +417,18 @@ public class MatrixConstruction {
 		
 		int maskedBit;
 		
-		int cPlsR = (col + row) ; //col Plus Row
+		int colPlusRow = (col + row) ; //col Plus Row
 		int rowInt_2 = (int) row / 2 ; //makes sure to keep the integer portion of the division
 		int colInt_3 = (int) col / 3 ;
-		int cTmsR = (col*row) ; // col Times Row
-		int cTmsRMd2 = cTmsR % 2 ; // col Times Row Modulo 2
-		int cTmsRMd3 = cTmsR % 3 ; 
+		int colTimesRow = (col*row) ; // col Times Row
+		int colTimesRowMod2 = colTimesRow % 2 ; // col Times Row Modulo 2
+		int colTimesRowMod3 = colTimesRow % 3 ; 
 		
 		switch(masking) {
 		
 		case 0 :
 			//masking a bit by negating it's binary value and then assigning the method ;
-			return (cPlsR % 2 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ; 
+			return (colPlusRow % 2 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ; 
 		
 			
 		case 1 :
@@ -440,7 +440,7 @@ public class MatrixConstruction {
 			
 		
 		case 3 : 
-			return (cPlsR % 3 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
+			return (colPlusRow % 3 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
 		
 		
 		case 4:
@@ -448,14 +448,14 @@ public class MatrixConstruction {
 		
 		
 		case 5 :
-			return (cTmsRMd2 + cTmsRMd3 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
+			return (colTimesRowMod2 + colTimesRowMod3 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
 			
 		
 		case 6 :
-			return ((cTmsRMd2 + cTmsRMd3) % 2 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
+			return ((colTimesRowMod2 + colTimesRowMod3) % 2 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
 		
 		case 7 : 
-			return (( (cPlsR % 2) + cTmsRMd3 ) % 2 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
+			return (( (colPlusRow % 2) + colTimesRowMod3 ) % 2 == 0) ? maskedBit = getVal(!dataBit) : getVal(dataBit) ;
 		
 		default :
 			maskedBit = getVal(dataBit);
@@ -477,7 +477,38 @@ public class MatrixConstruction {
 	
 	public static void addDataInformation(int[][] matrix, boolean[] data, int mask) {
 		// TODO Implementer
-
+		
+		int[]	bitInfos = new int [matrix.length*matrix.length] ;
+ 		int col = matrix.length;
+ 		int row = matrix.length;
+		
+		for (int i = 0 ; i < bitInfos.length ; ++i) {
+			int color = maskColor(col, row, data[i], mask);
+			
+			if(i % 2 == 0) {
+				matrix[col][row] = color ;
+				--col;
+			} else {
+				matrix[col][row] = color ;
+				--row;
+				++col;
+			}
+			
+		}
+	
+		
+	}
+	
+	public static boolean checkEmpty(int positionValue) {
+		
+		//color = maskedBit;
+		
+		if (positionValue != 0) {
+			return false;
+		} else {
+			return true;
+		}
+		
 	}
 	
 	public static int getVal(boolean bit) {
