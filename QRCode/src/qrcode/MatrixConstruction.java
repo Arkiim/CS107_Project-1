@@ -395,6 +395,7 @@ public class MatrixConstruction {
 		
 	}
 	
+		
 	/*
 	 * =======================================================================
 	 * ****************************** PART 3 *********************************
@@ -465,6 +466,16 @@ public class MatrixConstruction {
 		return maskedBit;
 		
 	}
+	
+	
+	public static void main(String[] args) {
+		int version = Main.VERSION;
+		int mask = Main.MASK;
+		boolean data[] = DataEncoding.byteModeEncoding(Main.INPUT, version);
+		int matrix[][] = constructMatrix(version, mask);
+		addDataInformation(matrix, data, mask);
+		
+	}
 
 	/**
 	 * Add the data bits into the QR code matrix
@@ -478,32 +489,70 @@ public class MatrixConstruction {
 	public static void addDataInformation(int[][] matrix, boolean[] data, int mask) {
 		// TODO Implementer
 		
-		int[]	bitInfos = new int [matrix.length*matrix.length] ;
- 		int col = matrix.length;
- 		int row = matrix.length;
-		
-		for (int i = 0 ; i < bitInfos.length ; ++i) {
-			int color = maskColor(col, row, data[i], mask);
-			
-			if(i % 2 == 0) {
-				matrix[col][row] = color ;
-				--col;
-			} else {
-				matrix[col][row] = color ;
-				--row;
-				++col;
-			}
-			
-		}
-	
+ 		int col = matrix.length-1,  row = matrix.length-1 ;
+		//System.out.println(matrix.length + ", " + matrix[20][6] );
+ 		
+ 		for(int j = 0 ; j < matrix.length-1 ; ++j) {
+ 		
+ 			addModule(matrix, col, row, data, mask, 'a');
+ 			--col;
+ 			
+ 		}
+ 		
 		
 	}
 	
-	public static boolean checkEmpty(int positionValue) {
+	public static void addModule(int[][] matrix, int col, int row, boolean data[], int mask, char asc_desc) {
+		
+		if (asc_desc == 'a') { //if flag equals 'a' for "ascending"
+			
+			for (int i = 0; row > 8 ; ++i) {
+				if(i % 2 == 0) {
+					
+					if( checkEmpty(matrix, col, row) ) { matrix[col][row] = R; }//maskColor(col, row, data[i], mask) ; 
+					else { System.out.println("dd"); continue;  }
+					--col;
+					//System.out.println(col + ", " + row);
+				
+				} else {
+					if( checkEmpty(matrix, col, row) ) { matrix[col][row] =R; }// maskColor(col, row, data[i], mask) ;
+					else { System.out.println("dd"); continue;  }
+					--row;
+					++col;
+					//System.out.println(col + ", " + row);
+				
+				}
+			}
+
+		} else if (asc_desc == 'd') { // or if it's 'd' for "descending"
+			
+			for ( int i = 0; row < matrix.length ; ++i) {
+				if(i % 2 == 0) {
+					if (checkEmpty(matrix, col, row)) {
+					matrix[col][row] = G;}// maskColor(col, row, data[i], mask) ;
+					else {System.out.println("dd"); continue; }
+					--col;
+					//System.out.println(col + ", " + row);
+					
+				} else {
+					if(checkEmpty(matrix, col, row)) {
+					matrix[col][row] = G;}//maskColor(col, row, data[i], mask) ;
+					else { System.out.println("dd"); continue; }
+					++row;
+					++col;
+					//System.out.println(col + ", " + row);
+					
+				}
+			}
+		}
+		
+	}
+	
+	public static boolean checkEmpty(int matrix[][], int col, int row) {
 		
 		//color = maskedBit;
 		
-		if (positionValue != 0) {
+		if (matrix[col][row] != 0) {
 			return false;
 		} else {
 			return true;
@@ -522,6 +571,7 @@ public class MatrixConstruction {
 		
 		return value;		
 	}
+	
 	
 	/*
 	 * =======================================================================
