@@ -46,7 +46,7 @@ public class MatrixConstruction {
 		/*
 		 * PART 3
 		 */
-		addDataInformation(matrix, data, mask);
+		//addDataInformation(matrix, data, mask);
 
 		return matrix;
 	}
@@ -477,7 +477,7 @@ public class MatrixConstruction {
 		
 	}
 
-	/**
+	/*
 	 * Add the data bits into the QR code matrix
 	 * 
 	 * @param matrix
