@@ -1,2 +1,5 @@
-# Mini_projet_1
-Creating a QR code
+# First CS-107 "Mini"- Project (Java OOP)
+
+---
+
+### _Creating a QR code._
