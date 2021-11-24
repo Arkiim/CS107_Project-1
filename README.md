@@ -5,4 +5,4 @@
 
 ### First CS-107 "mini" project: _Creating a QR code._
 
-NB: Archived
+<small> NB: Archived </small>
